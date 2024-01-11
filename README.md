@@ -1,6 +1,6 @@
 # babylon-mmd-viewer
 
-Mmd viewer powered by Babylon.js and babylon-mmd
+MMD viewer powered by [Babylon.js](https://github.com/BabylonJS/Babylon.js) and [babylon-mmd](https://github.com/noname0310/babylon-mmd)
 
 ![fig1](./docs/fig1.png)
 

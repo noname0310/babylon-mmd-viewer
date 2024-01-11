@@ -5,9 +5,7 @@ import type webpack from "webpack";
 import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 
 export default (env: any): webpack.Configuration & { devServer?: WebpackDevServerConfiguration } => ({
-    entry: {
-        index: "./src/index.ts"
-    },
+    entry: "./src/index.ts",
     output: {
         path: path.join(__dirname, "/dist"),
         filename: "[name].bundle.js",
@@ -42,9 +40,7 @@ export default (env: any): webpack.Configuration & { devServer?: WebpackDevServe
     },
     plugins: [
         new htmlWebpackPlugin({
-            filename: "index.html",
-            template: "./src/index.html",
-            chunks: ["index"]
+            template: "./src/index.html"
         }),
         new eslintPlugin({
             extensions: ["ts", "tsx"],
