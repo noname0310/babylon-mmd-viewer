@@ -1,2 +1,23 @@
 # babylon-mmd-viewer
-MMD viewer powered by Babylon.js and babylon-mmd
+
+Mmd viewer powered by Babylon.js and babylon-mmd
+
+![fig1](./docs/fig1.png)
+
+**you can try it [here](https://noname0310.github.io/babylon-mmd-viewer)**
+
+## Specification
+
+### Supported Format
+
+**Model** -  PMX, PMD, BPMX
+
+**Motion** - VMD, VPD, BVMD
+
+### Features
+
+Import model on local file system
+
+Multiple models
+
+Audio playback
