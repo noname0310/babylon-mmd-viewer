@@ -142,10 +142,11 @@ export class InspectorControlBuilder {
         inputValue.type = "number";
         inputValue.value = value.toString();
         inputValue.onchange = (): void => {
-            if (inputValue.value === "") return;
-            if (parseFloat(inputValue.value) < min) inputValue.value = min.toString();
-            if (parseFloat(inputValue.value) > max) inputValue.value = max.toString();
-            onChange(parseFloat(inputValue.value));
+            let value = parseFloat(inputValue.value);
+            if (isNaN(value)) value = 0;
+            if (value < min) value = min;
+            if (value > max) value = max;
+            onChange(value);
         };
         mainContainer.appendChild(inputValue);
 
@@ -206,10 +207,12 @@ export class InspectorControlBuilder {
         inputValueX.type = "number";
         inputValueX.value = value[0].toString();
         inputValueX.onchange = (): void => {
-            if (inputValueX.value === "") return;
-            if (parseFloat(inputValueX.value) < min) inputValueX.value = min.toString();
-            if (parseFloat(inputValueX.value) > max) inputValueX.value = max.toString();
-            onChange([parseFloat(inputValueX.value), value[1], value[2]]);
+            let valueX = parseFloat(inputValueX.value);
+            if (isNaN(valueX)) valueX = 0;
+            if (valueX < min) valueX = min;
+            if (valueX > max) valueX = max;
+            value[0] = valueX;
+            onChange(value);
         };
         valueContainer.appendChild(inputValueX);
 
@@ -239,10 +242,12 @@ export class InspectorControlBuilder {
         inputValueY.type = "number";
         inputValueY.value = value[1].toString();
         inputValueY.onchange = (): void => {
-            if (inputValueY.value === "") return;
-            if (parseFloat(inputValueY.value) < min) inputValueY.value = min.toString();
-            if (parseFloat(inputValueY.value) > max) inputValueY.value = max.toString();
-            onChange([value[0], parseFloat(inputValueY.value), value[2]]);
+            let valueY = parseFloat(inputValueY.value);
+            if (isNaN(valueY)) valueY = 0;
+            if (valueY < min) valueY = min;
+            if (valueY > max) valueY = max;
+            value[1] = valueY;
+            onChange(value);
         };
         valueContainer.appendChild(inputValueY);
 
@@ -272,10 +277,12 @@ export class InspectorControlBuilder {
         inputValueZ.type = "number";
         inputValueZ.value = value[2].toString();
         inputValueZ.onchange = (): void => {
-            if (inputValueZ.value === "") return;
-            if (parseFloat(inputValueZ.value) < min) inputValueZ.value = min.toString();
-            if (parseFloat(inputValueZ.value) > max) inputValueZ.value = max.toString();
-            onChange([value[0], value[1], parseFloat(inputValueZ.value)]);
+            let valueZ = parseFloat(inputValueZ.value);
+            if (isNaN(valueZ)) valueZ = 0;
+            if (valueZ < min) valueZ = min;
+            if (valueZ > max) valueZ = max;
+            value[2] = valueZ;
+            onChange(value);
         };
         valueContainer.appendChild(inputValueZ);
 
