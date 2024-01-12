@@ -334,7 +334,7 @@ export class ViewerUi {
             if (modelOrCamera !== mmdCamera) {
                 const model = modelOrCamera as MmdWasmModel;
                 model.resetState();
-                model.mesh.visibility = 1;
+                for (const mesh of model.mesh.metadata.meshes) mesh.visibility = 1;
             }
             motionLoader.flushCache(mmdCamera, mmdRuntime.models);
             mmdRuntime.seekAnimation(mmdRuntime.currentFrameTime, true);
@@ -488,7 +488,7 @@ export class ViewerUi {
                         } else {
                             const model = modelOrCamera as MmdWasmModel;
                             model.resetState();
-                            model.mesh.visibility = 1;
+                            for (const mesh of model.mesh.metadata.meshes) mesh.visibility = 1;
                             (this._mmdRuntime as unknown as { _needToInitializePhysicsModels: Set<MmdWasmModel>; })._needToInitializePhysicsModels.add(model);
                         }
                         while (modelOrCamera.runtimeAnimations.length !== 0) modelOrCamera.removeAnimation(0);
