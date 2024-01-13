@@ -375,7 +375,7 @@ export class ViewerUi {
                 "camera height scale",
                 cameraRoot.scaling.y,
                 0.1,
-                1,
+                2,
                 (value): void => {
                     cameraRoot.scaling.y = value;
                 }
