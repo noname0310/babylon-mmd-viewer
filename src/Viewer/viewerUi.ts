@@ -5,7 +5,7 @@ import type { Scene } from "@babylonjs/core/scene";
 import type { Nullable } from "@babylonjs/core/types";
 import type { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
-import type { MmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
+import { MmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 import type { MmdWasmAnimation } from "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmAnimation";
 import type { MmdWasmModel } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmModel";
 import type { MmdWasmRuntime } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
@@ -31,7 +31,7 @@ export class ViewerUi {
     private _cameraAnimationName: Nullable<string>;
 
     private readonly _importDialog: ImportDialog;
-    private readonly _objectListControl: ObjectListControl<MmdWasmModel | MmdCamera | Mesh>;
+    private readonly _objectListControl: ObjectListControl<MmdWasmModel | MmdCamera | MmdMesh | Mesh>;
     private readonly _inspectorDiv: HTMLDivElement;
     private readonly _controlBuilder: InspectorControlBuilder;
 
@@ -278,10 +278,14 @@ export class ViewerUi {
 
             for (const mesh of mmdMesh.metadata.meshes) mesh.receiveShadows = true;
             shadowGenerator.addShadowCaster(mmdMesh);
-            const mmdModel = mmdRuntime.createMmdModel(mmdMesh);
-
-            objectListControl.addItem(mmdModel, mmdMesh.metadata.header.modelName);
-            objectListControl.selectedItem = mmdModel;
+            if (MmdMesh.isMmdSkinnedMesh(mmdMesh)) {
+                const mmdModel = mmdRuntime.createMmdModel(mmdMesh);
+                objectListControl.addItem(mmdModel, mmdMesh.metadata.header.modelName);
+                objectListControl.selectedItem = mmdModel;
+            } else {
+                objectListControl.addItem(mmdMesh, mmdMesh.metadata.header.modelName);
+                objectListControl.selectedItem = mmdMesh;
+            }
         } else {
             const motionFiles: File[] = [];
             for (let i = 0; i < files.length; ++i) {
@@ -349,7 +353,7 @@ export class ViewerUi {
         }
     };
 
-    private _renderInspector(selectedItem: Nullable<MmdWasmModel | MmdCamera | Mesh>): void {
+    private _renderInspector(selectedItem: Nullable<MmdWasmModel | MmdCamera | MmdMesh | Mesh>): void {
         const mmdRuntime = this._mmdRuntime;
         const cameraRoot = this._cameraRoot;
         const mmdCamera = this._mmdCamera;
@@ -361,8 +365,12 @@ export class ViewerUi {
 
         inspectorDiv.innerHTML = "";
         if (selectedItem === null) return;
+        const isMmdModel = ((item: typeof selectedItem): item is MmdWasmModel => (item as MmdWasmModel).mesh !== undefined)(selectedItem);
+        const isMmdMesh = ((item: typeof selectedItem): item is MmdMesh => (item as MmdMesh).metadata?.isMmdModel === true)(selectedItem);
+        const isMesh = ((item: typeof selectedItem): item is Mesh => (item as MmdWasmModel).mesh === undefined && (item as MmdMesh).metadata?.isMmdModel !== true)(selectedItem);
+        const isMmdCamera = ((item: typeof selectedItem): item is MmdCamera => item === mmdCamera)(selectedItem);
 
-        if (selectedItem === mmdCamera) {
+        if (isMmdCamera) {
             const cameraHeightScale = controlBuilder.createScalarInput(
                 "camera height scale",
                 cameraRoot.scaling.y,
@@ -423,12 +431,12 @@ export class ViewerUi {
             const space = controlBuilder.createSpace();
             inspectorDiv.appendChild(space);
 
-            if ((selectedItem as MmdWasmModel).mesh === undefined) {
+            if (isMesh) {
                 const meshEnabled = controlBuilder.createCheckbox(
                     "enabled",
-                    (selectedItem as Mesh).isEnabled(),
+                    selectedItem.isEnabled(),
                     (value: boolean): void => {
-                        (selectedItem as Mesh).setEnabled(value);
+                        selectedItem.setEnabled(value);
                     }
                 );
                 inspectorDiv.appendChild(meshEnabled);
@@ -461,37 +469,35 @@ export class ViewerUi {
             inspectorDiv.appendChild(castShadows);
         }
 
-        if ((selectedItem as MmdWasmModel | MmdCamera).currentAnimation !== undefined) {
+        if (isMmdModel || isMmdCamera) {
             if (selectedItem !== mmdCamera) {
                 const space = controlBuilder.createSpace();
                 inspectorDiv.appendChild(space);
             }
 
-            const modelOrCamera = selectedItem as MmdWasmModel | MmdCamera;
-            const animationName = modelOrCamera === mmdCamera
+            const animationName = selectedItem === mmdCamera
                 ? this._cameraAnimationName
-                : modelOrCamera.currentAnimation?.animation.name ?? null;
+                : selectedItem.currentAnimation?.animation.name ?? null;
             const animationLabel = controlBuilder.createLabel(
                 "animation",
                 animationName ?? "none",
                 animationName === null
                     ? undefined
                     : (): void => {
-                        modelOrCamera.setAnimation(null);
-                        if (modelOrCamera === mmdCamera) {
+                        selectedItem.setAnimation(null);
+                        if (isMmdCamera) {
                             this._cameraAnimationName = null;
 
-                            mmdCamera.position.set(0, 10, 0);
-                            mmdCamera.rotation.setAll(0);
-                            mmdCamera.fov = 0.8;
-                            mmdCamera.distance = -45;
+                            selectedItem.position.set(0, 10, 0);
+                            selectedItem.rotation.setAll(0);
+                            selectedItem.fov = 0.8;
+                            selectedItem.distance = -45;
                         } else {
-                            const model = modelOrCamera as MmdWasmModel;
-                            model.resetState();
-                            for (const mesh of model.mesh.metadata.meshes) mesh.visibility = 1;
-                            (this._mmdRuntime as unknown as { _needToInitializePhysicsModels: Set<MmdWasmModel>; })._needToInitializePhysicsModels.add(model);
+                            selectedItem.resetState();
+                            for (const mesh of selectedItem.mesh.metadata.meshes) mesh.visibility = 1;
+                            (this._mmdRuntime as unknown as { _needToInitializePhysicsModels: Set<MmdWasmModel>; })._needToInitializePhysicsModels.add(selectedItem);
                         }
-                        while (modelOrCamera.runtimeAnimations.length !== 0) modelOrCamera.removeAnimation(0);
+                        while (selectedItem.runtimeAnimations.length !== 0) selectedItem.removeAnimation(0);
                         this._renderInspector(selectedItem);
                     }
             );
@@ -512,6 +518,16 @@ export class ViewerUi {
                 );
                 inspectorDiv.appendChild(removeModel);
             }
+        } else if (isMmdMesh) {
+            const removeModel = controlBuilder.createButton(
+                "#f44",
+                "remove model",
+                (): void => {
+                    selectedItem.dispose(false, true);
+                    this._objectListControl.removeItem(selectedItem);
+                }
+            );
+            inspectorDiv.appendChild(removeModel);
         }
     }
 }
