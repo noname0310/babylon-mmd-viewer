@@ -22,6 +22,7 @@ import { SdefInjector } from "babylon-mmd/esm/Loader/sdefInjector";
 import { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
 import { MmdPhysics } from "babylon-mmd/esm/Runtime/mmdPhysics";
+import { MmdWasmReleaseInstanceType } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/release";
 import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { MmdWasmRuntime } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
@@ -49,7 +50,7 @@ export class SceneBuilder implements ISceneBuilder {
         const [wasmInstance] = await parallelLoadAsync(scene, [
             ["mmd runtime", async(updateProgress): Promise<MmdWasmInstance> => {
                 updateProgress({ lengthComputable: true, loaded: 0, total: 1 });
-                const mmdWasmInstance = await getMmdWasmInstance();
+                const mmdWasmInstance = await getMmdWasmInstance(new MmdWasmReleaseInstanceType());
                 updateProgress({ lengthComputable: true, loaded: 1, total: 1 });
                 return mmdWasmInstance;
             }],
