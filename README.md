@@ -4,7 +4,7 @@ MMD viewer powered by [Babylon.js](https://github.com/BabylonJS/Babylon.js) and 
 
 ![fig1](./docs/fig1.png)
 
-**you can try it [here](https://noname0310.github.io/babylon-mmd-viewer)**
+**you can try it [here](https://babylon-mmd-viewer.vercel.app/)**
 
 ## Specification
 
