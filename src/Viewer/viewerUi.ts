@@ -337,7 +337,9 @@ export class ViewerUi {
             modelOrCamera.setAnimation(animationName);
             if (modelOrCamera !== mmdCamera) {
                 const model = modelOrCamera as MmdWasmModel;
-                model.resetState();
+                mmdRuntime.lock.wait();
+                model.ikSolverStates.fill(1);
+                model.morph.resetMorphWeights();
                 for (const mesh of model.mesh.metadata.meshes) mesh.visibility = 1;
             }
             motionLoader.flushCache(mmdCamera, mmdRuntime.models);
@@ -366,7 +368,6 @@ export class ViewerUi {
         inspectorDiv.innerHTML = "";
         if (selectedItem === null) return;
         const isMmdModel = ((item: typeof selectedItem): item is MmdWasmModel => (item as MmdWasmModel).mesh !== undefined)(selectedItem);
-        const isMmdMesh = ((item: typeof selectedItem): item is MmdMesh => (item as MmdMesh).metadata?.isMmdModel === true)(selectedItem);
         const isMesh = ((item: typeof selectedItem): item is Mesh => (item as MmdWasmModel).mesh === undefined && (item as MmdMesh).metadata?.isMmdModel !== true)(selectedItem);
         const isMmdCamera = ((item: typeof selectedItem): item is MmdCamera => item === mmdCamera)(selectedItem);
 
@@ -493,7 +494,9 @@ export class ViewerUi {
                             selectedItem.fov = 0.8;
                             selectedItem.distance = -45;
                         } else {
-                            selectedItem.resetState();
+                            mmdRuntime.lock.wait();
+                            selectedItem.ikSolverStates.fill(1);
+                            selectedItem.morph.resetMorphWeights();
                             for (const mesh of selectedItem.mesh.metadata.meshes) mesh.visibility = 1;
                             (this._mmdRuntime as unknown as { _needToInitializePhysicsModels: Set<MmdWasmModel>; })._needToInitializePhysicsModels.add(selectedItem);
                         }
@@ -502,29 +505,18 @@ export class ViewerUi {
                     }
             );
             inspectorDiv.appendChild(animationLabel);
+        }
 
-            if (selectedItem !== mmdCamera) {
-                const removeModel = controlBuilder.createButton(
-                    "#f44",
-                    "remove model",
-                    (): void => {
-                        const model = selectedItem as MmdWasmModel;
-                        const mesh = model.mesh;
-                        mmdRuntime.destroyMmdModel(model);
-                        mesh.dispose(false, true);
-
-                        this._objectListControl.removeItem(model);
-                    }
-                );
-                inspectorDiv.appendChild(removeModel);
-            }
-        } else if (isMmdMesh) {
+        if (isMmdModel) {
             const removeModel = controlBuilder.createButton(
                 "#f44",
                 "remove model",
                 (): void => {
-                    selectedItem.dispose(false, true);
-                    this._objectListControl.removeItem(selectedItem);
+                    const model = selectedItem as MmdWasmModel;
+                    const mesh = model.mesh;
+                    this._modelLoader.disposeModel(mesh);
+                    mmdRuntime.destroyMmdModel(model);
+                    this._objectListControl.removeItem(model);
                 }
             );
             inspectorDiv.appendChild(removeModel);

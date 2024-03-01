@@ -57,11 +57,19 @@ export default (env: any): webpack.Configuration & { devServer?: WebpackDevServe
         },
         hot: true,
         watchFiles: ["src/**/*"],
-        https: false,
+        server: "https",
+        headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            "Cross-Origin-Opener-Policy": "same-origin",
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            "Cross-Origin-Embedder-Policy": "require-corp"
+        },
         compress: true
     },
-    mode: env.production ? "production" : "development",
-    experiments: {
-        asyncWebAssembly: true
-    }
+    stats: {
+        warningsFilter: [
+            "Circular dependency between chunks with runtime"
+        ]
+    },
+    mode: env.production ? "production" : "development"
 });

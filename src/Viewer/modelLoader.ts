@@ -4,12 +4,14 @@ import "babylon-mmd/esm/Loader/Optimized/bpmxLoader";
 
 import type { Engine } from "@babylonjs/core/Engines/engine";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import type { Scene } from "@babylonjs/core/scene";
 import type { MmdModelLoader } from "babylon-mmd/esm/Loader/mmdModelLoader";
+import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
 import { MmdStandardMaterialBuilder } from "babylon-mmd/esm/Loader/mmdStandardMaterialBuilder";
 import { PmxObject } from "babylon-mmd/esm/Loader/Parser/pmxObject";
 import type { PmLoader } from "babylon-mmd/esm/Loader/pmLoader";
-import type { MmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
+import type { MmdMesh, RuntimeMmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class ModelLoader {
     private readonly _engine: Engine;
@@ -80,6 +82,41 @@ export class ModelLoader {
         }
 
         return mmdMesh;
+    }
+
+    public disposeModel(mmdMesh: RuntimeMmdMesh): void {
+        const metadata = mmdMesh.metadata;
+        const materials = metadata.materials as MmdStandardMaterial[];
+
+        const texturesReferenceCounts: Map<BaseTexture, number> = new Map();
+        {
+            const sceneMaterials = this._scene.materials;
+            for (let i = 0; i < sceneMaterials.length; i++) {
+                const material = sceneMaterials[i] as unknown as Partial<MmdStandardMaterial>;
+                if (material.diffuseTexture) texturesReferenceCounts.set(material.diffuseTexture, (texturesReferenceCounts.get(material.diffuseTexture) ?? 0) + 1);
+                if (material.sphereTexture) texturesReferenceCounts.set(material.sphereTexture, (texturesReferenceCounts.get(material.sphereTexture) ?? 0) + 1);
+                if (material.toonTexture) texturesReferenceCounts.set(material.toonTexture, (texturesReferenceCounts.get(material.toonTexture) ?? 0) + 1);
+            }
+        }
+
+        for (let i = 0; i < materials.length; i++) {
+            const material = materials[i];
+            if (material.diffuseTexture !== null) texturesReferenceCounts.set(material.diffuseTexture, (texturesReferenceCounts.get(material.diffuseTexture) ?? 0) - 1);
+            if (material.sphereTexture !== null) texturesReferenceCounts.set(material.sphereTexture, (texturesReferenceCounts.get(material.sphereTexture) ?? 0) - 1);
+            if (material.toonTexture !== null) texturesReferenceCounts.set(material.toonTexture, (texturesReferenceCounts.get(material.toonTexture) ?? 0) - 1);
+        }
+
+        for (const [texture, referenceCount] of texturesReferenceCounts) {
+            if (referenceCount === 0) texture.dispose();
+        }
+
+        for (let i = 0; i < materials.length; i++) {
+            materials[i]?.dispose(true, false);
+        }
+
+        metadata.skeleton.dispose();
+        mmdMesh.dispose(false, false);
+        mmdMesh.metadata = metadata;
     }
 
     public getBackfaceCullingInfo(mmdMesh: MmdMesh): boolean[] {

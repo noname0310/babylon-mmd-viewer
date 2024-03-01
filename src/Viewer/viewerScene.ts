@@ -22,14 +22,13 @@ import { SdefInjector } from "babylon-mmd/esm/Loader/sdefInjector";
 import { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
 import { MmdPhysics } from "babylon-mmd/esm/Runtime/mmdPhysics";
-import { MmdWasmReleaseInstanceType } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/release";
+import { MmdWasmInstanceTypeMR } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/multiRelease";
 import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
-import { MmdWasmRuntime } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
+import { MmdWasmRuntime, MmdWasmRuntimeAnimationEvaluationType } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
 import { MmdPlayerControl } from "babylon-mmd/esm/Runtime/Util/mmdPlayerControl";
 
 import type { ISceneBuilder } from "@/baseRuntime";
-import { BodyWaker } from "@/Util/bodyWaker";
 import { createCameraSwitch } from "@/Util/createCameraSwitch";
 import { createDefaultArcRotateCamera } from "@/Util/createDefaultArcRotateCamera";
 import { createDefaultGround } from "@/Util/createDefaultGround";
@@ -50,7 +49,7 @@ export class SceneBuilder implements ISceneBuilder {
         const [wasmInstance] = await parallelLoadAsync(scene, [
             ["mmd runtime", async(updateProgress): Promise<MmdWasmInstance> => {
                 updateProgress({ lengthComputable: true, loaded: 0, total: 1 });
-                const mmdWasmInstance = await getMmdWasmInstance(new MmdWasmReleaseInstanceType());
+                const mmdWasmInstance = await getMmdWasmInstance(new MmdWasmInstanceTypeMR());
                 updateProgress({ lengthComputable: true, loaded: 1, total: 1 });
                 return mmdWasmInstance;
             }],
@@ -106,9 +105,9 @@ export class SceneBuilder implements ISceneBuilder {
 
         const mmdRuntime = new MmdWasmRuntime(wasmInstance, scene, new MmdPhysics(scene));
         mmdRuntime.loggingEnabled = true;
+        mmdRuntime.evaluationType = MmdWasmRuntimeAnimationEvaluationType.Buffered;
         mmdRuntime.register(scene);
         mmdRuntime.setCamera(mmdCamera);
-        new BodyWaker(mmdRuntime).register(scene);
         const audioPlayer = new StreamAudioPlayer(scene);
         audioPlayer.preservesPitch = false;
         mmdRuntime.setAudioPlayer(audioPlayer);
