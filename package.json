@@ -5,7 +5,7 @@
     "scripts": {
         "start": "webpack serve --mode development",
         "watch": "webpack --watch",
-        "build": "webpack -c webpack.config.build.ts && copyfiles vercel.json dist",
+        "build": "webpack -c webpack.config.build.ts",
         "lint": "eslint --ext .ts,.tsx . --fix --cache"
     },
     "repository": {
@@ -21,7 +21,6 @@
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^7.1.0",
         "@typescript-eslint/parser": "^7.1.0",
-        "copyfiles": "^2.4.1",
         "eslint": "^8.57.0",
         "eslint-plugin-simple-import-sort": "^12.0.0",
         "eslint-webpack-plugin": "^4.0.1",
