@@ -2,7 +2,7 @@ import "babylon-mmd/esm/Loader/pmxLoader";
 import "babylon-mmd/esm/Loader/pmdLoader";
 import "babylon-mmd/esm/Loader/Optimized/bpmxLoader";
 
-import type { Engine } from "@babylonjs/core/Engines/engine";
+import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
 import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import type { Scene } from "@babylonjs/core/scene";
@@ -14,7 +14,7 @@ import type { PmLoader } from "babylon-mmd/esm/Loader/pmLoader";
 import type { MmdMesh, RuntimeMmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class ModelLoader {
-    private readonly _engine: Engine;
+    private readonly _engine: AbstractEngine;
     private readonly _scene: Scene;
     private readonly _loaders: MmdModelLoader<any, any, any>[];
     private readonly _backfaceCullingInfoMap: WeakMap<MmdMesh, boolean[]>;
