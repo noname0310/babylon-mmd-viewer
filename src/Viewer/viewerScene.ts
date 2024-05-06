@@ -83,6 +83,7 @@ export class SceneBuilder implements ISceneBuilder {
         directionalLight.intensity = 0.5;
 
         const shadowGenerator = new CascadedShadowGenerator(1024, directionalLight);
+        shadowGenerator.transparencyShadow = true;
         shadowGenerator.usePercentageCloserFiltering = true;
         shadowGenerator.forceBackFacesOnly = false;
         shadowGenerator.lambda = 0.96;

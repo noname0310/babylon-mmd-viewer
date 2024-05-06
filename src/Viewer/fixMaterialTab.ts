@@ -122,7 +122,7 @@ export class FixMaterialTab {
         }, 2000);
     }
 
-    public setMmdMesh(value: Nullable<RuntimeMmdMesh>, initalBackfaceCullingInfo: boolean[]): void {
+    public setMmdMesh(value: Nullable<RuntimeMmdMesh>): void {
         this._mmdMesh = value;
 
         if (value === null) {
@@ -170,16 +170,7 @@ export class FixMaterialTab {
             transparencyModeButton.textContent = fromTransparencyModeEnumToString(material.transparencyMode ?? 0);
             transparencyModeButton.onclick = (): void => {
                 if (material.transparencyMode === null) material.transparencyMode = 0;
-                material.transparencyMode = (material.transparencyMode + 1) % 3;
-
-                if (material.diffuseTexture !== null) {
-                    const hasAlpha = material.transparencyMode !== Material.MATERIAL_OPAQUE;
-                    if (hasAlpha) material.diffuseTexture.hasAlpha = true;
-                    material.useAlphaFromDiffuseTexture = hasAlpha;
-                    material.backFaceCulling = initalBackfaceCullingInfo[i];
-                    if (hasAlpha) material.backFaceCulling = false;
-                }
-
+                material.transparencyMode = material.transparencyMode === Material.MATERIAL_ALPHABLEND ? Material.MATERIAL_OPAQUE : Material.MATERIAL_ALPHABLEND;
                 transparencyModeButton.textContent = fromTransparencyModeEnumToString(material.transparencyMode ?? 0);
             };
             item.appendChild(transparencyModeButton);

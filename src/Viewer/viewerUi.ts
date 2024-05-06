@@ -216,12 +216,9 @@ export class ViewerUi {
         }
         objectListControl.onSelectedItemChanged = (item): void => {
             if (item !== null && (item as MmdWasmModel).mesh !== undefined) {
-                fixMaterialTab.setMmdMesh(
-                    (item as MmdWasmModel).mesh,
-                    modelLoader.getBackfaceCullingInfo((item as MmdWasmModel).mesh as unknown as MmdMesh)
-                );
+                fixMaterialTab.setMmdMesh((item as MmdWasmModel).mesh);
             } else {
-                fixMaterialTab.setMmdMesh(null, []);
+                fixMaterialTab.setMmdMesh(null);
             }
             this._renderInspector(item);
         };
