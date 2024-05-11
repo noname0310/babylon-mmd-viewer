@@ -35,7 +35,8 @@ export default (env: any): webpack.Configuration & { devServer?: WebpackDevServe
         modules: ["src", "node_modules"],
         extensions: [".js", ".jsx", ".ts", ".tsx"],
         fallback: {
-            "url": require.resolve("url/")
+            "fs": false,
+            "path": false
         }
     },
     plugins: [

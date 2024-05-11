@@ -14,10 +14,9 @@ import { ImageProcessingConfiguration } from "@babylonjs/core/Materials/imagePro
 import { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
-import { HavokPlugin } from "@babylonjs/core/Physics/v2/Plugins/havokPlugin";
 import { DefaultRenderingPipeline } from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline";
 import { Scene } from "@babylonjs/core/scene";
-import havokPhysics from "@babylonjs/havok";
+import ammo from "ammojs-typed";
 import { SdefInjector } from "babylon-mmd/esm/Loader/sdefInjector";
 import { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
@@ -25,14 +24,15 @@ import { MmdWasmInstanceTypeMR } from "babylon-mmd/esm/Runtime/Optimized/Instanc
 import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { MmdWasmRuntime, MmdWasmRuntimeAnimationEvaluationType } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
-import { MmdPhysics } from "babylon-mmd/esm/Runtime/Physics/mmdPhysics";
+import { MmdAmmoJSPlugin } from "babylon-mmd/esm/Runtime/Physics/mmdAmmoJSPlugin";
+import { MmdAmmoPhysics } from "babylon-mmd/esm/Runtime/Physics/mmdAmmoPhysics";
 import { MmdPlayerControl } from "babylon-mmd/esm/Runtime/Util/mmdPlayerControl";
 
 import type { ISceneBuilder } from "@/baseRuntime";
+import { createAmmoGround } from "@/Util/createAmmoGround";
 import { createCameraSwitch } from "@/Util/createCameraSwitch";
 import { createDefaultArcRotateCamera } from "@/Util/createDefaultArcRotateCamera";
 import { createDefaultGround } from "@/Util/createDefaultGround";
-import { createGroundCollider } from "@/Util/createGroundCollider";
 import { parallelLoadAsync } from "@/Util/parallelLoadAsync";
 
 import { CachedMotionLoader } from "./cachedMotionLoader";
@@ -53,16 +53,17 @@ export class SceneBuilder implements ISceneBuilder {
                 updateProgress({ lengthComputable: true, loaded: 1, total: 1 });
                 return mmdWasmInstance;
             }],
-            ["physics engine", async(updateProgress): Promise<HavokPlugin> => {
+            ["physics engine", async(updateProgress): Promise<MmdAmmoJSPlugin> => {
                 updateProgress({ lengthComputable: true, loaded: 0, total: 1 });
-                const havokInstance = await havokPhysics();
-                const havokPlugin = new HavokPlugin(true, havokInstance);
-                scene.enablePhysics(new Vector3(0, -9.8 * 10, 0), havokPlugin);
+                const ammoInstance = await ammo();
+                const ammoPlugin = new MmdAmmoJSPlugin(true, ammoInstance);
+                scene.enablePhysics(new Vector3(0, -9.8 * 10, 0), ammoPlugin);
                 updateProgress({ lengthComputable: true, loaded: 1, total: 1 });
-                return havokPlugin;
+                return ammoPlugin;
             }]
         ]);
-        createGroundCollider(scene);
+        const collideGround = createAmmoGround(scene);
+        collideGround.isVisible = false;
 
         const mmdRoot = new TransformNode("mmdRoot", scene);
         const cameraRoot = new TransformNode("cameraRoot", scene);
@@ -104,7 +105,7 @@ export class SceneBuilder implements ISceneBuilder {
         defaultPipeline.imageProcessing.vignetteColor = new Color4(0, 0, 0, 0);
         defaultPipeline.imageProcessing.vignetteEnabled = true;
 
-        const mmdRuntime = new MmdWasmRuntime(wasmInstance, scene, new MmdPhysics(scene));
+        const mmdRuntime = new MmdWasmRuntime(wasmInstance, scene, new MmdAmmoPhysics(scene));
         mmdRuntime.loggingEnabled = true;
         mmdRuntime.evaluationType = MmdWasmRuntimeAnimationEvaluationType.Buffered;
         mmdRuntime.register(scene);
