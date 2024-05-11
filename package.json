@@ -43,6 +43,6 @@
         "@babylonjs/inspector": "^7.6.0",
         "@babylonjs/materials": "^7.6.0",
         "ammojs-typed": "^1.0.6",
-        "babylon-mmd": "^0.42.2"
+        "babylon-mmd": "^0.42.4"
     }
 }
