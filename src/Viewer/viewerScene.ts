@@ -21,11 +21,11 @@ import havokPhysics from "@babylonjs/havok";
 import { SdefInjector } from "babylon-mmd/esm/Loader/sdefInjector";
 import { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
-import { MmdPhysics } from "babylon-mmd/esm/Runtime/mmdPhysics";
 import { MmdWasmInstanceTypeMR } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/multiRelease";
 import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { MmdWasmRuntime, MmdWasmRuntimeAnimationEvaluationType } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
+import { MmdPhysics } from "babylon-mmd/esm/Runtime/Physics/mmdPhysics";
 import { MmdPlayerControl } from "babylon-mmd/esm/Runtime/Util/mmdPlayerControl";
 
 import type { ISceneBuilder } from "@/baseRuntime";
