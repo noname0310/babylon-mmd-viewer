@@ -45,6 +45,7 @@ export class SceneBuilder implements ISceneBuilder {
 
         const scene = new Scene(engine);
         scene.clearColor = new Color4(0.95, 0.95, 0.95, 1.0);
+        scene.ambientColor = new Color3(1, 1, 1);
 
         const [wasmInstance] = await parallelLoadAsync(scene, [
             ["mmd runtime", async(updateProgress): Promise<MmdWasmInstance> => {
