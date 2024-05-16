@@ -517,6 +517,17 @@ export class ViewerUi {
                 }
             );
             inspectorDiv.appendChild(removeModel);
+        } else if (MmdMesh.isMmdMesh(selectedItem as MmdMesh)) {
+            const removeMesh = controlBuilder.createButton(
+                "#f44",
+                "remove mesh",
+                (): void => {
+                    const mesh = selectedItem as MmdMesh;
+                    this._modelLoader.disposeModel(mesh);
+                    this._objectListControl.removeItem(mesh);
+                }
+            );
+            inspectorDiv.appendChild(removeMesh);
         }
     }
 }

@@ -67,7 +67,7 @@ export class ModelLoader {
         return mmdMesh;
     }
 
-    public disposeModel(mmdMesh: RuntimeMmdMesh): void {
+    public disposeModel(mmdMesh: RuntimeMmdMesh | MmdMesh): void {
         const metadata = mmdMesh.metadata;
         const materials = metadata.materials as MmdStandardMaterial[];
 
@@ -97,7 +97,7 @@ export class ModelLoader {
             materials[i]?.dispose(true, false);
         }
 
-        metadata.skeleton.dispose();
+        metadata.skeleton?.dispose();
         mmdMesh.dispose(false, false);
         mmdMesh.metadata = metadata;
     }
