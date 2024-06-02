@@ -23,6 +23,9 @@ export class ModelLoader {
 
         const materialBuilder = new MmdStandardMaterialBuilder();
         materialBuilder.loadOutlineRenderingProperties = (): void => { /* do nothing */ };
+        materialBuilder.afterBuildSingleMaterial = (material: MmdStandardMaterial): void => {
+            material.forceDepthWrite = true;
+        };
 
         const loaders = this._loaders = [".pmx", ".pmd", ".bpmx"].map((ext) => SceneLoader.GetPluginForExtension(ext)) as MmdModelLoader<any, any, any>[];
         for (const loader of loaders) {
