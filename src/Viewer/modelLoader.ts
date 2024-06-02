@@ -4,6 +4,7 @@ import "babylon-mmd/esm/Loader/Optimized/bpmxLoader";
 
 import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import { Material } from "@babylonjs/core/Materials/material";
 import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import type { Scene } from "@babylonjs/core/scene";
 import type { MmdModelLoader } from "babylon-mmd/esm/Loader/mmdModelLoader";
@@ -25,6 +26,13 @@ export class ModelLoader {
         materialBuilder.loadOutlineRenderingProperties = (): void => { /* do nothing */ };
         materialBuilder.afterBuildSingleMaterial = (material: MmdStandardMaterial): void => {
             material.forceDepthWrite = true;
+            material.useAlphaFromDiffuseTexture = true;
+            if (material.diffuseTexture !== null) material.diffuseTexture.hasAlpha = true;
+
+            if (material.transparencyMode === Material.MATERIAL_ALPHABLEND) {
+                material.transparencyMode = Material.MATERIAL_ALPHATESTANDBLEND;
+                material.alphaCutOff = 0.01;
+            }
         };
 
         const loaders = this._loaders = [".pmx", ".pmd", ".bpmx"].map((ext) => SceneLoader.GetPluginForExtension(ext)) as MmdModelLoader<any, any, any>[];

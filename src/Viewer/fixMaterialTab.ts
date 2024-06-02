@@ -170,7 +170,7 @@ export class FixMaterialTab {
             transparencyModeButton.textContent = fromTransparencyModeEnumToString(material.transparencyMode ?? 0);
             transparencyModeButton.onclick = (): void => {
                 if (material.transparencyMode === null) material.transparencyMode = 0;
-                material.transparencyMode = material.transparencyMode === Material.MATERIAL_ALPHABLEND ? Material.MATERIAL_OPAQUE : Material.MATERIAL_ALPHABLEND;
+                material.transparencyMode = material.transparencyMode === Material.MATERIAL_ALPHATESTANDBLEND ? Material.MATERIAL_OPAQUE : Material.MATERIAL_ALPHATESTANDBLEND;
                 transparencyModeButton.textContent = fromTransparencyModeEnumToString(material.transparencyMode ?? 0);
             };
             item.appendChild(transparencyModeButton);
@@ -186,6 +186,8 @@ export class FixMaterialTab {
                 return "Alpha Test";
             case Material.MATERIAL_ALPHABLEND:
                 return "Alpha Blend";
+            case Material.MATERIAL_ALPHATESTANDBLEND:
+                return "Alpha";
             default:
                 return "Unknown";
             }
