@@ -1,14 +1,18 @@
 import type { ShadowGenerator } from "@babylonjs/core/Lights/Shadows/shadowGenerator";
+import type { Material } from "@babylonjs/core/Materials";
 import type { Mesh } from "@babylonjs/core/Meshes/mesh";
 import type { TransformNode } from "@babylonjs/core/Meshes/transformNode";
 import type { Scene } from "@babylonjs/core/scene";
 import type { Nullable } from "@babylonjs/core/types";
 import type { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
+import type { IMmdMaterialProxyConstructor } from "babylon-mmd/esm/Runtime/IMmdMaterialProxy";
 import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
 import { MmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 import type { MmdWasmAnimation } from "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmAnimation";
 import type { MmdWasmModel } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmModel";
 import type { MmdWasmRuntime } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
+
+import { AlphaTestMaterialProxy } from "@/Util/alphaTestMaterialProxy";
 
 import type { CachedMotionLoader } from "./cachedMotionLoader";
 import { FileDropControlBuilder } from "./fileDropControlBuilder";
@@ -276,7 +280,9 @@ export class ViewerUi {
             for (const mesh of mmdMesh.metadata.meshes) mesh.receiveShadows = true;
             shadowGenerator.addShadowCaster(mmdMesh);
             if (MmdMesh.isMmdSkinnedMesh(mmdMesh)) {
-                const mmdModel = mmdRuntime.createMmdModel(mmdMesh);
+                const mmdModel = mmdRuntime.createMmdModel(mmdMesh, {
+                    materialProxyConstructor: AlphaTestMaterialProxy as unknown as IMmdMaterialProxyConstructor<Material>
+                });
                 objectListControl.addItem(mmdModel, mmdMesh.metadata.header.modelName);
                 objectListControl.selectedItem = mmdModel;
             } else {
