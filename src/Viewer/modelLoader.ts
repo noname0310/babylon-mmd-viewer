@@ -110,6 +110,6 @@ export class ModelLoader {
 
         metadata.skeleton?.dispose();
         mmdMesh.dispose(false, false);
-        mmdMesh.metadata = metadata;
+        mmdMesh.metadata = null!;
     }
 }

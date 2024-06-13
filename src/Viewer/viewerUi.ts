@@ -517,8 +517,10 @@ export class ViewerUi {
                 (): void => {
                     const model = selectedItem as MmdWasmModel;
                     const mesh = model.mesh;
-                    this._modelLoader.disposeModel(mesh);
+                    const metadata = mesh.metadata;
                     mmdRuntime.destroyMmdModel(model);
+                    mesh.metadata = metadata;
+                    this._modelLoader.disposeModel(mesh);
                     this._objectListControl.removeItem(model);
                 }
             );

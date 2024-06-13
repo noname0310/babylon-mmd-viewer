@@ -23,12 +23,12 @@ import { MmdWasmInstanceTypeMR } from "babylon-mmd/esm/Runtime/Optimized/Instanc
 import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { MmdWasmRuntime, MmdWasmRuntimeAnimationEvaluationType } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
+import ammo from "babylon-mmd/esm/Runtime/Physics/External/ammo.wasm";
 import { MmdAmmoJSPlugin } from "babylon-mmd/esm/Runtime/Physics/mmdAmmoJSPlugin";
 import { MmdAmmoPhysics } from "babylon-mmd/esm/Runtime/Physics/mmdAmmoPhysics";
 import { MmdPlayerControl } from "babylon-mmd/esm/Runtime/Util/mmdPlayerControl";
 
 import type { ISceneBuilder } from "@/baseRuntime";
-import ammo from "@/External/ammo.wasm";
 import { createAmmoGround } from "@/Util/createAmmoGround";
 import { createCameraSwitch } from "@/Util/createCameraSwitch";
 import { createDefaultArcRotateCamera } from "@/Util/createDefaultArcRotateCamera";
