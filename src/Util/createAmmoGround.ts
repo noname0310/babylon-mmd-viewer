@@ -1,4 +1,6 @@
-import {  Vector3 } from "@babylonjs/core/Maths/math.vector";
+import "@babylonjs/core/Physics/v1/physicsEngineComponent";
+
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { CreatePlane } from "@babylonjs/core/Meshes/Builders/planeBuilder";
 import type { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { PhysicsImpostor } from "@babylonjs/core/Physics/v1/physicsImpostor";

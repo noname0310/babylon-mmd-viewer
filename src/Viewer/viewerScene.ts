@@ -19,17 +19,14 @@ import { Scene } from "@babylonjs/core/scene";
 import { SdefInjector } from "babylon-mmd/esm/Loader/sdefInjector";
 import { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
-import { MmdWasmInstanceTypeMR } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/multiRelease";
+import { MmdWasmInstanceTypeMPR } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/multiPhysicsRelease";
 import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { MmdWasmRuntime, MmdWasmRuntimeAnimationEvaluationType } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
-import ammo from "babylon-mmd/esm/Runtime/Physics/External/ammo.wasm";
-import { MmdAmmoJSPlugin } from "babylon-mmd/esm/Runtime/Physics/mmdAmmoJSPlugin";
-import { MmdAmmoPhysics } from "babylon-mmd/esm/Runtime/Physics/mmdAmmoPhysics";
+import { MmdWasmPhysics } from "babylon-mmd/esm/Runtime/Optimized/Physics/mmdWasmPhysics";
 import { MmdPlayerControl } from "babylon-mmd/esm/Runtime/Util/mmdPlayerControl";
 
 import type { ISceneBuilder } from "@/baseRuntime";
-import { createAmmoGround } from "@/Util/createAmmoGround";
 import { createCameraSwitch } from "@/Util/createCameraSwitch";
 import { createDefaultArcRotateCamera } from "@/Util/createDefaultArcRotateCamera";
 import { createDefaultGround } from "@/Util/createDefaultGround";
@@ -50,21 +47,11 @@ export class SceneBuilder implements ISceneBuilder {
         const [wasmInstance] = await parallelLoadAsync(scene, [
             ["mmd runtime", async(updateProgress): Promise<MmdWasmInstance> => {
                 updateProgress({ lengthComputable: true, loaded: 0, total: 1 });
-                const mmdWasmInstance = await getMmdWasmInstance(new MmdWasmInstanceTypeMR());
+                const mmdWasmInstance = await getMmdWasmInstance(new MmdWasmInstanceTypeMPR());
                 updateProgress({ lengthComputable: true, loaded: 1, total: 1 });
                 return mmdWasmInstance;
-            }],
-            ["physics engine", async(updateProgress): Promise<MmdAmmoJSPlugin> => {
-                updateProgress({ lengthComputable: true, loaded: 0, total: 1 });
-                const ammoInstance = await ammo();
-                const ammoPlugin = new MmdAmmoJSPlugin(true, ammoInstance);
-                scene.enablePhysics(new Vector3(0, -9.8 * 10, 0), ammoPlugin);
-                updateProgress({ lengthComputable: true, loaded: 1, total: 1 });
-                return ammoPlugin;
             }]
         ]);
-        const collideGround = createAmmoGround(scene);
-        collideGround.isVisible = false;
 
         const mmdRoot = new TransformNode("mmdRoot", scene);
         const cameraRoot = new TransformNode("cameraRoot", scene);
@@ -106,7 +93,7 @@ export class SceneBuilder implements ISceneBuilder {
         defaultPipeline.imageProcessing.vignetteColor = new Color4(0, 0, 0, 0);
         defaultPipeline.imageProcessing.vignetteEnabled = true;
 
-        const mmdRuntime = new MmdWasmRuntime(wasmInstance, scene, new MmdAmmoPhysics(scene));
+        const mmdRuntime = new MmdWasmRuntime(wasmInstance, scene, new MmdWasmPhysics(scene));
         mmdRuntime.loggingEnabled = true;
         mmdRuntime.evaluationType = MmdWasmRuntimeAnimationEvaluationType.Buffered;
         mmdRuntime.register(scene);
