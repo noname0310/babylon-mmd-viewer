@@ -515,7 +515,7 @@ export class ViewerUi {
                 "#f44",
                 "remove model",
                 (): void => {
-                    const model = selectedItem as MmdWasmModel;
+                    const model = selectedItem;
                     const mesh = model.mesh;
                     const metadata = mesh.metadata;
                     mmdRuntime.destroyMmdModel(model);

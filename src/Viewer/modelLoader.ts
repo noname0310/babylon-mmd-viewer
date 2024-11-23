@@ -3,21 +3,19 @@ import "babylon-mmd/esm/Loader/pmdLoader";
 import "babylon-mmd/esm/Loader/Optimized/bpmxLoader";
 
 import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
-import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import { loadAssetContainerAsync } from "@babylonjs/core/Loading/sceneLoader";
 import { Material } from "@babylonjs/core/Materials/material";
 import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import type { Scene } from "@babylonjs/core/scene";
-import type { MmdModelLoader } from "babylon-mmd/esm/Loader/mmdModelLoader";
 import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
 import { MmdStandardMaterialBuilder } from "babylon-mmd/esm/Loader/mmdStandardMaterialBuilder";
 import type { PmxObject } from "babylon-mmd/esm/Loader/Parser/pmxObject";
-import type { PmLoader } from "babylon-mmd/esm/Loader/pmLoader";
 import type { MmdMesh, RuntimeMmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class ModelLoader {
     private readonly _engine: AbstractEngine;
     private readonly _scene: Scene;
-    private readonly _loaders: MmdModelLoader<any, any, any>[];
+    private readonly _materialBuilder: MmdStandardMaterialBuilder;
 
     public constructor(scene: Scene) {
         this._engine = scene.getEngine();
@@ -35,40 +33,40 @@ export class ModelLoader {
                 material.alphaCutOff = 0.01;
             }
         };
-
-        const loaders = this._loaders = [".pmx", ".pmd", ".bpmx"].map((ext) => SceneLoader.GetPluginForExtension(ext)) as MmdModelLoader<any, any, any>[];
-        for (const loader of loaders) {
-            loader.loggingEnabled = true;
-            loader.materialBuilder = materialBuilder;
-        }
+        this._materialBuilder = materialBuilder;
     }
 
     public async loadModel(loadFile: File, referenceFiles: File[]): Promise<MmdMesh> {
-        const extesnion = loadFile.name.substring(loadFile.name.lastIndexOf("."));
-        const loader = this._loaders.find(loader => Object.keys(loader.extensions).includes(extesnion));
-        if (loader === undefined) {
-            throw new Error(`Cannot find loader for extension: ${extesnion}`);
-        }
-
-        if ((loader as PmLoader).referenceFiles !== undefined) {
-            (loader as PmLoader).referenceFiles = referenceFiles;
-        }
 
         const engine = this._engine;
         engine.displayLoadingUI();
-        const mmdMesh = await SceneLoader.ImportMeshAsync(
-            undefined,
-            loadFile.webkitRelativePath.substring(0, loadFile.webkitRelativePath.lastIndexOf("/") + 1),
+        const mmdMesh = await loadAssetContainerAsync(
             loadFile,
             this._scene,
-            event => {
-                if (event.lengthComputable) {
-                    engine.loadingUIText = `<br/><br/>Loading ${loadFile.name}... ${event.loaded}/${event.total} (${Math.floor(event.loaded * 100 / event.total)}%)`;
-                } else {
-                    engine.loadingUIText = `<br/><br/>Loading ${loadFile.name}... ${event.loaded}`;
+            {
+                onProgress: event => {
+                    if (event.lengthComputable) {
+                        engine.loadingUIText = `<br/><br/>Loading ${loadFile.name}... ${event.loaded}/${event.total} (${Math.floor(event.loaded * 100 / event.total)}%)`;
+                    } else {
+                        engine.loadingUIText = `<br/><br/>Loading ${loadFile.name}... ${event.loaded}`;
+                    }
+                },
+                rootUrl: loadFile.webkitRelativePath.substring(0, loadFile.webkitRelativePath.lastIndexOf("/") + 1),
+                pluginOptions: {
+                    mmdmodel: {
+                        materialBuilder: this._materialBuilder,
+                        buildSkeleton: true,
+                        buildMorph: true,
+                        loggingEnabled: true,
+                        referenceFiles
+                    }
                 }
             }
-        ).then(result => result.meshes[0] as MmdMesh);
+        ).then(result => {
+            result.addAllToScene();
+            const mmdMesh = result.meshes[0] as MmdMesh;
+            return mmdMesh;
+        });
         for (const mesh of mmdMesh.metadata.meshes) mesh.alwaysSelectAsActiveMesh = true;
 
         // very trickly method for ground collision. will be removed later
@@ -92,10 +90,6 @@ export class ModelLoader {
         });
 
         engine.hideLoadingUI();
-
-        if ((loader as PmLoader).referenceFiles !== undefined) {
-            (loader as PmLoader).referenceFiles = [];
-        }
 
         return mmdMesh;
     }
