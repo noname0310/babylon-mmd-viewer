@@ -4,27 +4,39 @@ import "babylon-mmd/esm/Loader/Optimized/bpmxLoader";
 
 import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
 import { loadAssetContainerAsync } from "@babylonjs/core/Loading/sceneLoader";
+import { Material } from "@babylonjs/core/Materials/material";
 import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import type { Scene } from "@babylonjs/core/scene";
-import { OiComputeTransformInjector } from "babylon-mmd";
 import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
-import { MmdStandardMaterialBuilder, MmdStandardMaterialRenderMethod } from "babylon-mmd/esm/Loader/mmdStandardMaterialBuilder";
+import { MmdStandardMaterialBuilder } from "babylon-mmd/esm/Loader/mmdStandardMaterialBuilder";
 import type { PmxObject } from "babylon-mmd/esm/Loader/Parser/pmxObject";
 import type { MmdMesh, RuntimeMmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class ModelLoader {
     private readonly _engine: AbstractEngine;
     private readonly _scene: Scene;
+    private readonly _materialBuilder: MmdStandardMaterialBuilder;
 
     public constructor(scene: Scene) {
         this._engine = scene.getEngine();
         this._scene = scene;
+
+        const materialBuilder = new MmdStandardMaterialBuilder();
+        materialBuilder.loadOutlineRenderingProperties = (): void => { /* do nothing */ };
+        materialBuilder.afterBuildSingleMaterial = (material: MmdStandardMaterial): void => {
+            material.forceDepthWrite = true;
+            material.useAlphaFromDiffuseTexture = true;
+            if (material.diffuseTexture !== null) material.diffuseTexture.hasAlpha = true;
+
+            if (material.transparencyMode === Material.MATERIAL_ALPHABLEND) {
+                material.transparencyMode = Material.MATERIAL_ALPHATESTANDBLEND;
+                material.alphaCutOff = 0.01;
+            }
+        };
+        this._materialBuilder = materialBuilder;
     }
 
     public async loadModel(loadFile: File, referenceFiles: File[]): Promise<MmdMesh> {
-        const materialBuilder = new MmdStandardMaterialBuilder();
-        materialBuilder.deleteTextureBufferAfterLoad = false;
-        materialBuilder.renderMethod = MmdStandardMaterialRenderMethod.AlphaEvaluation;
 
         const engine = this._engine;
         engine.displayLoadingUI();
@@ -32,15 +44,19 @@ export class ModelLoader {
             loadFile,
             this._scene,
             {
-                onProgress: (event) => engine.loadingUIText = `<br/><br/><br/>Loading (${loadFile.name})... ${event.loaded}/${event.total} (${Math.floor(event.loaded * 100 / event.total)}%)`,
+                onProgress: event => {
+                    if (event.lengthComputable) {
+                        engine.loadingUIText = `<br/><br/>Loading ${loadFile.name}... ${event.loaded}/${event.total} (${Math.floor(event.loaded * 100 / event.total)}%)`;
+                    } else {
+                        engine.loadingUIText = `<br/><br/>Loading ${loadFile.name}... ${event.loaded}`;
+                    }
+                },
                 rootUrl: loadFile.webkitRelativePath.substring(0, loadFile.webkitRelativePath.lastIndexOf("/") + 1),
                 pluginOptions: {
                     mmdmodel: {
-                        materialBuilder,
+                        materialBuilder: this._materialBuilder,
                         buildSkeleton: true,
                         buildMorph: true,
-                        boundingBoxMargin: 0,
-                        preserveSerializationData: true,
                         loggingEnabled: true,
                         referenceFiles
                     }
@@ -49,8 +65,6 @@ export class ModelLoader {
         ).then(result => {
             result.addAllToScene();
             const mmdMesh = result.meshes[0] as MmdMesh;
-            OiComputeTransformInjector.OverrideComputeTransformMatrices(mmdMesh.metadata.skeleton!);
-            mmdMesh.metadata.skeleton?._markAsDirty();
             return mmdMesh;
         });
         for (const mesh of mmdMesh.metadata.meshes) mesh.alwaysSelectAsActiveMesh = true;
