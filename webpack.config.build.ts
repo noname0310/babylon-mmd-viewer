@@ -20,6 +20,12 @@ export default (_env: any): webpack.Configuration & { devServer?: WebpackDevServ
                 loader: "ts-loader"
             },
             {
+                test: /\.m?js$/,
+                resolve: {
+                    fullySpecified: false
+                }
+            },
+            {
                 test: /\.html$/,
                 loader: "html-loader"
             }
