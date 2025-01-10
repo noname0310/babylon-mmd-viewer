@@ -22,6 +22,12 @@ export default (env: any): webpack.Configuration & { devServer?: WebpackDevServe
                 loader: "ts-loader"
             },
             {
+                test: /\.m?js$/,
+                resolve: {
+                    fullySpecified: false
+                }
+            },
+            {
                 test: /\.html$/,
                 loader: "html-loader"
             }
@@ -46,7 +52,8 @@ export default (env: any): webpack.Configuration & { devServer?: WebpackDevServe
         new eslintPlugin({
             extensions: ["ts", "tsx"],
             fix: true,
-            cache: true
+            cache: true,
+            configType: "flat"
         })
     ],
     devServer: {
