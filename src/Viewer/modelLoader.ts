@@ -3,7 +3,7 @@ import "babylon-mmd/esm/Loader/pmdLoader";
 import "babylon-mmd/esm/Loader/Optimized/bpmxLoader";
 
 import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
-import { loadAssetContainerAsync } from "@babylonjs/core/Loading/sceneLoader";
+import { LoadAssetContainerAsync } from "@babylonjs/core/Loading/sceneLoader";
 import { Material } from "@babylonjs/core/Materials/material";
 import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
 import type { Scene } from "@babylonjs/core/scene";
@@ -40,7 +40,7 @@ export class ModelLoader {
 
         const engine = this._engine;
         engine.displayLoadingUI();
-        const mmdMesh = await loadAssetContainerAsync(
+        const mmdMesh = await LoadAssetContainerAsync(
             loadFile,
             this._scene,
             {
