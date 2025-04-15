@@ -9,7 +9,6 @@ import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture
 import type { Scene } from "@babylonjs/core/scene";
 import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
 import { MmdStandardMaterialBuilder } from "babylon-mmd/esm/Loader/mmdStandardMaterialBuilder";
-import type { PmxObject } from "babylon-mmd/esm/Loader/Parser/pmxObject";
 import type { MmdMesh, RuntimeMmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class ModelLoader {
@@ -68,26 +67,6 @@ export class ModelLoader {
             return mmdMesh;
         });
         for (const mesh of mmdMesh.metadata.meshes) mesh.alwaysSelectAsActiveMesh = true;
-
-        // very trickly method for ground collision. will be removed later
-        const rigidBodies = mmdMesh.metadata.rigidBodies as PmxObject.RigidBody[];
-        rigidBodies.push({
-            name: "ground",
-            englishName: "ground",
-            boneIndex: 0,
-            collisionGroup: 0,
-            collisionMask: 0xFFFF,
-            shapeType: 5 as number, // static plane
-            shapeSize: [0, 1, 0, 0] as unknown as [number, number, number],
-            shapePosition: [0, 0, 0],
-            shapeRotation: [0, 0, 0],
-            mass: 0,
-            linearDamping: 0,
-            angularDamping: 0,
-            repulsion: 0,
-            friction: 0,
-            physicsMode: 3 as number // static
-        });
 
         engine.hideLoadingUI();
 

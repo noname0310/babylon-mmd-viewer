@@ -281,7 +281,10 @@ export class ViewerUi {
             shadowGenerator.addShadowCaster(mmdMesh);
             if (MmdMesh.isMmdSkinnedMesh(mmdMesh)) {
                 const mmdModel = mmdRuntime.createMmdModel(mmdMesh, {
-                    materialProxyConstructor: AlphaTestMaterialProxy as unknown as IMmdMaterialProxyConstructor<Material>
+                    materialProxyConstructor: AlphaTestMaterialProxy as unknown as IMmdMaterialProxyConstructor<Material>,
+                    buildPhysics: {
+                        disableOffsetForConstraintFrame: true
+                    }
                 });
                 objectListControl.addItem(mmdModel, mmdMesh.metadata.header.modelName);
                 objectListControl.selectedItem = mmdModel;

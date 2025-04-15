@@ -23,7 +23,12 @@ import { MmdWasmInstanceTypeMPR } from "babylon-mmd/esm/Runtime/Optimized/Instan
 import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { MmdWasmRuntime, MmdWasmRuntimeAnimationEvaluationType } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
+import { MotionType } from "babylon-mmd/esm/Runtime/Optimized/Physics/Bind/motionType";
+import { PhysicsStaticPlaneShape } from "babylon-mmd/esm/Runtime/Optimized/Physics/Bind/physicsShape";
+import { RigidBody } from "babylon-mmd/esm/Runtime/Optimized/Physics/Bind/rigidBody";
+import { RigidBodyConstructionInfo } from "babylon-mmd/esm/Runtime/Optimized/Physics/Bind/rigidBodyConstructionInfo";
 import { MmdWasmPhysics } from "babylon-mmd/esm/Runtime/Optimized/Physics/mmdWasmPhysics";
+import { MmdWasmPhysicsRuntimeImpl } from "babylon-mmd/esm/Runtime/Optimized/Physics/mmdWasmPhysicsRuntimeImpl";
 import { MmdPlayerControl } from "babylon-mmd/esm/Runtime/Util/mmdPlayerControl";
 
 import type { ISceneBuilder } from "@/baseRuntime";
@@ -104,6 +109,14 @@ export class SceneBuilder implements ISceneBuilder {
         const mmdPlayerControl = new MmdPlayerControl(scene, mmdRuntime, audioPlayer);
         mmdPlayerControl.showPlayerControl();
 
+        const physicsRuntime = mmdRuntime.physics!.getImpl(MmdWasmPhysicsRuntimeImpl);
+        {
+            const info = new RigidBodyConstructionInfo(mmdRuntime.wasmInstance);
+            info.motionType = MotionType.Static;
+            info.shape = new PhysicsStaticPlaneShape(physicsRuntime, new Vector3(0, 1, 0), 0);
+            const groundBody = new RigidBody(physicsRuntime, info);
+            physicsRuntime.addRigidBodyToGlobal(groundBody);
+        }
         const ground = createDefaultGround(scene, { size: 300 });
 
         const modelLoader = new ModelLoader(scene);
