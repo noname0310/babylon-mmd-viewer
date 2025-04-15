@@ -3,7 +3,6 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import stylisticJs from "@stylistic/eslint-plugin-js";
 import stylisticTs from "@stylistic/eslint-plugin-ts";
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
@@ -24,7 +23,6 @@ export default tseslint.config(
             "**/*.tsx"
         ],
         plugins: {
-            "@typescript-eslint": typescriptEslint,
             "simple-import-sort": simpleImportSort,
             "@stylistic/js": stylisticJs,
             "@stylistic/ts": stylisticTs
