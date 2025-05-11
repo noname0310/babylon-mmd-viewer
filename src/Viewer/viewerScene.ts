@@ -20,8 +20,8 @@ import { SdefInjector } from "babylon-mmd/esm/Loader/sdefInjector";
 import { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
 import { MmdWasmInstanceTypeMPR } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/multiPhysicsRelease";
-import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
-import { getMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
+import type { IMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
+import { GetMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { MmdWasmRuntime, MmdWasmRuntimeAnimationEvaluationType } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
 import { MotionType } from "babylon-mmd/esm/Runtime/Optimized/Physics/Bind/motionType";
 import { PhysicsStaticPlaneShape } from "babylon-mmd/esm/Runtime/Optimized/Physics/Bind/physicsShape";
@@ -50,9 +50,9 @@ export class SceneBuilder implements ISceneBuilder {
         scene.ambientColor = new Color3(0.5, 0.5, 0.5);
 
         const [wasmInstance] = await parallelLoadAsync(scene, [
-            ["mmd runtime", async(updateProgress): Promise<MmdWasmInstance> => {
+            ["mmd runtime", async(updateProgress): Promise<IMmdWasmInstance> => {
                 updateProgress({ lengthComputable: true, loaded: 0, total: 1 });
-                const mmdWasmInstance = await getMmdWasmInstance(new MmdWasmInstanceTypeMPR());
+                const mmdWasmInstance = await GetMmdWasmInstance(new MmdWasmInstanceTypeMPR());
                 updateProgress({ lengthComputable: true, loaded: 1, total: 1 });
                 return mmdWasmInstance;
             }]

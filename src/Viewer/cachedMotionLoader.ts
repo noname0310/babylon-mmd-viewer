@@ -4,18 +4,18 @@ import { VmdLoader } from "babylon-mmd/esm/Loader/vmdLoader";
 import { VpdLoader } from "babylon-mmd/esm/Loader/vpdLoader";
 import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
 import { MmdWasmAnimation } from "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmAnimation";
-import type { MmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
+import type { IMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import type { MmdWasmModel } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmModel";
 
 export class CachedMotionLoader {
     private readonly _scene: Scene;
-    private readonly _wasmInstance: MmdWasmInstance;
+    private readonly _wasmInstance: IMmdWasmInstance;
     private readonly _vmdLoader: VmdLoader;
     private readonly _bvmdLoader: BvmdLoader;
     private readonly _vpdLoader: VpdLoader;
     private readonly _cache: [File | File[], MmdWasmAnimation][] = [];
 
-    public constructor(scene: Scene, wasmInstance: MmdWasmInstance) {
+    public constructor(scene: Scene, wasmInstance: IMmdWasmInstance) {
         this._scene = scene;
         this._wasmInstance = wasmInstance;
         const vmdLoader = this._vmdLoader = new VmdLoader(scene);
