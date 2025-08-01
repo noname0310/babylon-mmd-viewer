@@ -9,7 +9,7 @@ import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture
 import type { Scene } from "@babylonjs/core/scene";
 import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
 import { MmdStandardMaterialBuilder } from "babylon-mmd/esm/Loader/mmdStandardMaterialBuilder";
-import type { MmdMesh, RuntimeMmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
+import type { MmdMesh, TrimmedMmdSkinnedMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class ModelLoader {
     private readonly _engine: AbstractEngine;
@@ -73,7 +73,7 @@ export class ModelLoader {
         return mmdMesh;
     }
 
-    public disposeModel(mmdMesh: RuntimeMmdMesh | MmdMesh): void {
+    public disposeModel(mmdMesh: TrimmedMmdSkinnedMesh | MmdMesh): void {
         const metadata = mmdMesh.metadata;
         const materials = metadata.materials as MmdStandardMaterial[];
 

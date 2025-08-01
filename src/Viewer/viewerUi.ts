@@ -7,6 +7,7 @@ import type { Nullable } from "@babylonjs/core/types";
 import type { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import type { IMmdMaterialProxyConstructor } from "babylon-mmd/esm/Runtime/IMmdMaterialProxy";
 import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
+import type { TrimmedMmdSkinnedMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 import { MmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 import type { MmdWasmAnimation } from "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmAnimation";
 import type { MmdWasmModel } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmModel";
@@ -220,7 +221,7 @@ export class ViewerUi {
         }
         objectListControl.onSelectedItemChanged = (item): void => {
             if (item !== null && (item as MmdWasmModel).mesh !== undefined) {
-                fixMaterialTab.setMmdMesh((item as MmdWasmModel).mesh);
+                fixMaterialTab.setMmdMesh((item as MmdWasmModel).mesh as TrimmedMmdSkinnedMesh);
             } else {
                 fixMaterialTab.setMmdMesh(null);
             }
@@ -338,9 +339,9 @@ export class ViewerUi {
             if (targetModel === null) return;
 
             const modelOrCamera = targetModel.value;
-            while (modelOrCamera.runtimeAnimations.length !== 0) modelOrCamera.removeAnimation(0);
-            modelOrCamera.addAnimation(mmdAnimation);
-            modelOrCamera.setAnimation(animationName);
+            while (modelOrCamera.runtimeAnimations.size !== 0) modelOrCamera.destroyRuntimeAnimation(modelOrCamera.runtimeAnimations.entries().next().value![0]);
+            const runtimeAnimationhandle = modelOrCamera.createRuntimeAnimation(mmdAnimation);
+            modelOrCamera.setRuntimeAnimation(runtimeAnimationhandle);
             if (modelOrCamera !== mmdCamera) {
                 const model = modelOrCamera as MmdWasmModel;
                 mmdRuntime.lock.wait();
@@ -491,7 +492,7 @@ export class ViewerUi {
                 animationName === null
                     ? undefined
                     : (): void => {
-                        selectedItem.setAnimation(null);
+                        selectedItem.setRuntimeAnimation(null);
                         if (isMmdCamera) {
                             this._cameraAnimationName = null;
 
@@ -506,7 +507,7 @@ export class ViewerUi {
                             for (const mesh of selectedItem.mesh.metadata.meshes) mesh.visibility = 1;
                             (this._mmdRuntime as unknown as { _needToInitializePhysicsModels: Set<MmdWasmModel>; })._needToInitializePhysicsModels.add(selectedItem);
                         }
-                        while (selectedItem.runtimeAnimations.length !== 0) selectedItem.removeAnimation(0);
+                        while (selectedItem.runtimeAnimations.size !== 0) selectedItem.destroyRuntimeAnimation(selectedItem.runtimeAnimations.entries().next().value![0]);
                         this._renderInspector(selectedItem);
                     }
             );

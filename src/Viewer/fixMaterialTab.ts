@@ -1,13 +1,13 @@
 import { Material } from "@babylonjs/core/Materials/material";
 import type { Nullable } from "@babylonjs/core/types";
 import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
-import type { RuntimeMmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
+import type { TrimmedMmdSkinnedMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class FixMaterialTab {
     public readonly root: HTMLDivElement;
 
     private readonly _ownerDocument: Document;
-    private _mmdMesh: Nullable<RuntimeMmdMesh>;
+    private _mmdMesh: Nullable<TrimmedMmdSkinnedMesh>;
 
     private _uiToggleFadeOutTimeout: Nullable<number>;
 
@@ -122,7 +122,7 @@ export class FixMaterialTab {
         }, 2000);
     }
 
-    public setMmdMesh(value: Nullable<RuntimeMmdMesh>): void {
+    public setMmdMesh(value: Nullable<TrimmedMmdSkinnedMesh>): void {
         this._mmdMesh = value;
 
         if (value === null) {

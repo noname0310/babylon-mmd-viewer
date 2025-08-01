@@ -127,7 +127,7 @@ export class CachedMotionLoader {
         for (const item of this._cache) {
             let used = false;
 
-            for (const runtimeAnimation of cameraRoot.runtimeAnimations) {
+            for (const runtimeAnimation of cameraRoot.runtimeAnimations.values()) {
                 if (runtimeAnimation.animation === item[1].cameraTrack) {
                     used = true;
                     break;
@@ -135,7 +135,7 @@ export class CachedMotionLoader {
             }
 
             for (const root of roots) {
-                for (const runtimeAnimation of root.runtimeAnimations) {
+                for (const runtimeAnimation of root.runtimeAnimations.values()) {
                     if (runtimeAnimation.animation === item[1]) {
                         used = true;
                         break;
