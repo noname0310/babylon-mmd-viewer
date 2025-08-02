@@ -102,7 +102,7 @@ export class SceneBuilder implements ISceneBuilder {
         mmdRuntime.loggingEnabled = true;
         mmdRuntime.evaluationType = MmdWasmRuntimeAnimationEvaluationType.Buffered;
         mmdRuntime.register(scene);
-        mmdRuntime.setCamera(mmdCamera);
+        mmdRuntime.addAnimatable(mmdCamera);
         const audioPlayer = new StreamAudioPlayer(scene);
         audioPlayer.preservesPitch = false;
         mmdRuntime.setAudioPlayer(audioPlayer);
