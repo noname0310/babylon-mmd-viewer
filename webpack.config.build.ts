@@ -6,7 +6,7 @@ import type { Configuration as WebpackDevServerConfiguration } from "webpack-dev
 export default (_env: any): webpack.Configuration & { devServer?: WebpackDevServerConfiguration } => ({
     entry: "./src/index.ts",
     output: {
-        path: path.join(__dirname, "/dist"),
+        path: path.join(import.meta.dirname, "/dist"),
         filename: "[name].bundle.js",
         clean: true
     },
@@ -34,7 +34,7 @@ export default (_env: any): webpack.Configuration & { devServer?: WebpackDevServ
     resolve: {
         alias: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            "@": path.resolve(__dirname, "src")
+            "@": path.resolve(import.meta.dirname, "src")
         },
         modules: ["src", "node_modules"],
         extensions: [".js", ".jsx", ".ts", ".tsx"],
