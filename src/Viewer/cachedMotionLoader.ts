@@ -1,8 +1,8 @@
-import type { Scene } from "@babylonjs/core/scene";
+import type { Scene } from "@babylonjs/core/scene.pure";
 import { BvmdLoader } from "babylon-mmd/esm/Loader/Optimized/bvmdLoader";
 import { VmdLoader } from "babylon-mmd/esm/Loader/vmdLoader";
 import { VpdLoader } from "babylon-mmd/esm/Loader/vpdLoader";
-import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
+import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera.pure";
 import { MmdWasmAnimation } from "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmAnimation";
 import type { IMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import type { MmdWasmModel } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmModel";

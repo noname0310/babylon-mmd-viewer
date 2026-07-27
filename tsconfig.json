@@ -24,6 +24,10 @@
             ]
         }
     },
+    "include": [
+        "src/**/*",
+        "node_modules/babylon-mmd/esm/**/*.types.d.ts"
+    ],
     "exclude": [
         "dist"
     ],

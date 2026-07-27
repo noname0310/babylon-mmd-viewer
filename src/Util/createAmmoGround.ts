@@ -1,10 +1,8 @@
-import "@babylonjs/core/Physics/v1/physicsEngineComponent";
-
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { CreatePlane } from "@babylonjs/core/Meshes/Builders/planeBuilder";
-import type { Mesh } from "@babylonjs/core/Meshes/mesh";
-import { PhysicsImpostor } from "@babylonjs/core/Physics/v1/physicsImpostor";
-import type { Scene } from "@babylonjs/core/scene";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector.pure";
+import { CreatePlane } from "@babylonjs/core/Meshes/Builders/planeBuilder.pure";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh.pure";
+import { PhysicsImpostor } from "@babylonjs/core/Physics/v1/physicsImpostor.pure";
+import type { Scene } from "@babylonjs/core/scene.pure";
 
 export function createAmmoGround(scene: Scene): Mesh {
     const ground = CreatePlane("ground", { size: 300 }, scene);

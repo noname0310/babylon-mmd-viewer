@@ -1,14 +1,13 @@
-import "babylon-mmd/esm/Loader/pmxLoader";
-import "babylon-mmd/esm/Loader/pmdLoader";
-import "babylon-mmd/esm/Loader/Optimized/bpmxLoader";
-
-import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
+import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine.pure";
 import { LoadAssetContainerAsync } from "@babylonjs/core/Loading/sceneLoader";
-import { Material } from "@babylonjs/core/Materials/material";
-import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture";
-import type { Scene } from "@babylonjs/core/scene";
-import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
+import { Material } from "@babylonjs/core/Materials/material.pure";
+import type { BaseTexture } from "@babylonjs/core/Materials/Textures/baseTexture.pure";
+import type { Scene } from "@babylonjs/core/scene.pure";
+import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial.pure";
 import { MmdStandardMaterialBuilder } from "babylon-mmd/esm/Loader/mmdStandardMaterialBuilder";
+import { RegisterBpmxLoader } from "babylon-mmd/esm/Loader/Optimized/bpmxLoader.pure";
+import { RegisterPmdLoader } from "babylon-mmd/esm/Loader/pmdLoader.pure";
+import { RegisterPmxLoader } from "babylon-mmd/esm/Loader/pmxLoader.pure";
 import type { MmdMesh, TrimmedMmdSkinnedMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class ModelLoader {
@@ -17,6 +16,9 @@ export class ModelLoader {
     private readonly _materialBuilder: MmdStandardMaterialBuilder;
 
     public constructor(scene: Scene) {
+        RegisterPmxLoader();
+        RegisterPmdLoader();
+        RegisterBpmxLoader();
         this._engine = scene.getEngine();
         this._scene = scene;
 

@@ -1,24 +1,24 @@
-import "@babylonjs/core/Animations/animatable";
-import "@babylonjs/core/Loading/loadingScreen";
-import "@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent";
-import "@babylonjs/core/Materials/Textures/Loaders/tgaTextureLoader";
-import "babylon-mmd/esm/Runtime/Animation/mmdRuntimeCameraAnimation";
-import "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmRuntimeModelAnimation";
-
-import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine";
-import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
-import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
-import { CascadedShadowGenerator } from "@babylonjs/core/Lights/Shadows/cascadedShadowGenerator";
+import { RegisterAnimatable } from "@babylonjs/core/Animations/animatable.pure";
+import type { AbstractEngine } from "@babylonjs/core/Engines/abstractEngine.pure";
+import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight.pure";
+import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight.pure";
+import { CascadedShadowGenerator } from "@babylonjs/core/Lights/Shadows/cascadedShadowGenerator.pure";
 import { ShadowGenerator } from "@babylonjs/core/Lights/Shadows/shadowGenerator";
-import { ImageProcessingConfiguration } from "@babylonjs/core/Materials/imageProcessingConfiguration";
-import { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
-import { DefaultRenderingPipeline } from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline";
-import { Scene } from "@babylonjs/core/scene";
+import { RegisterLoadingScreen } from "@babylonjs/core/Loading/loadingScreen.pure";
+import { ImageProcessingConfiguration } from "@babylonjs/core/Materials/imageProcessingConfiguration.pure";
+import { registerTextureLoader } from "@babylonjs/core/Materials/Textures/Loaders/textureLoaderManager";
+import { _TGATextureLoader } from "@babylonjs/core/Materials/Textures/Loaders/tgaTextureLoader";
+import { Color3, Color4 } from "@babylonjs/core/Maths/math.color.pure";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector.pure";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode.pure";
+import { RegisterJoinedPhysicsEngineComponent } from "@babylonjs/core/Physics/joinedPhysicsEngineComponent.pure";
+import { DefaultRenderingPipeline } from "@babylonjs/core/PostProcesses/RenderPipeline/Pipelines/defaultRenderingPipeline.pure";
+import { Scene } from "@babylonjs/core/scene.pure";
 import { SdefInjector } from "babylon-mmd/esm/Loader/sdefInjector";
+import { RegisterMmdRuntimeCameraAnimation } from "babylon-mmd/esm/Runtime/Animation/mmdRuntimeCameraAnimation.pure";
 import { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
-import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
+import { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera.pure";
+import { RegisterMmdWasmRuntimeModelAnimation } from "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmRuntimeModelAnimation.pure";
 import { MmdWasmInstanceTypeMPR } from "babylon-mmd/esm/Runtime/Optimized/InstanceType/multiPhysicsRelease";
 import type { IMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
 import { GetMmdWasmInstance } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmInstance";
@@ -43,6 +43,12 @@ import { ViewerUi } from "./viewerUi";
 
 export class SceneBuilder implements ISceneBuilder {
     public async build(canvas: HTMLCanvasElement, engine: AbstractEngine): Promise<Scene> {
+        RegisterAnimatable();
+        RegisterLoadingScreen();
+        registerTextureLoader(".tga", () => new _TGATextureLoader());
+        RegisterJoinedPhysicsEngineComponent();
+        RegisterMmdRuntimeCameraAnimation();
+        RegisterMmdWasmRuntimeModelAnimation();
         SdefInjector.OverrideEngineCreateEffect(engine);
 
         const scene = new Scene(engine);

@@ -1,7 +1,7 @@
-import { Material } from "@babylonjs/core/Materials/material";
-import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { Material } from "@babylonjs/core/Materials/material.pure";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh.pure";
 import type { Nullable } from "@babylonjs/core/types";
-import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
+import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial.pure";
 import type { Vec3, Vec4 } from "babylon-mmd/esm/Loader/Parser/mmdTypes";
 import type { IMmdMaterialProxy, IMmdMaterialProxyConstructor } from "babylon-mmd/esm/Runtime/IMmdMaterialProxy";
 

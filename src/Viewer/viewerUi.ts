@@ -1,20 +1,19 @@
 import type { ShadowGenerator } from "@babylonjs/core/Lights/Shadows/shadowGenerator";
-import type { Material } from "@babylonjs/core/Materials";
-import type { Mesh } from "@babylonjs/core/Meshes/mesh";
-import type { TransformNode } from "@babylonjs/core/Meshes/transformNode";
-import type { Scene } from "@babylonjs/core/scene";
+import type { Material } from "@babylonjs/core/Materials/pure";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh.pure";
+import type { TransformNode } from "@babylonjs/core/Meshes/transformNode.pure";
+import type { Scene } from "@babylonjs/core/scene.pure";
 import type { Nullable } from "@babylonjs/core/types";
 import type { StreamAudioPlayer } from "babylon-mmd/esm/Runtime/Audio/streamAudioPlayer";
 import type { IMmdMaterialProxyConstructor } from "babylon-mmd/esm/Runtime/IMmdMaterialProxy";
-import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera";
+import type { MmdCamera } from "babylon-mmd/esm/Runtime/mmdCamera.pure";
 import type { TrimmedMmdSkinnedMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 import { MmdMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 import type { MmdWasmAnimation } from "babylon-mmd/esm/Runtime/Optimized/Animation/mmdWasmAnimation";
 import type { MmdWasmModel } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmModel";
 import type { MmdWasmRuntime } from "babylon-mmd/esm/Runtime/Optimized/mmdWasmRuntime";
 
-import { AlphaTestMaterialProxy } from "@/Util/alphaTestMaterialProxy";
-
+import { AlphaTestMaterialProxy } from "../Util/alphaTestMaterialProxy";
 import type { CachedMotionLoader } from "./cachedMotionLoader";
 import { FileDropControlBuilder } from "./fileDropControlBuilder";
 import { FixMaterialTab } from "./fixMaterialTab";

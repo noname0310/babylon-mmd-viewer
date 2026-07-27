@@ -1,6 +1,6 @@
-import { Material } from "@babylonjs/core/Materials/material";
+import { Material } from "@babylonjs/core/Materials/material.pure";
 import type { Nullable } from "@babylonjs/core/types";
-import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial";
+import type { MmdStandardMaterial } from "babylon-mmd/esm/Loader/mmdStandardMaterial.pure";
 import type { TrimmedMmdSkinnedMesh } from "babylon-mmd/esm/Runtime/mmdMesh";
 
 export class FixMaterialTab {

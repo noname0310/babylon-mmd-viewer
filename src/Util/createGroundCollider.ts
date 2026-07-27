@@ -1,9 +1,9 @@
-import { Quaternion, Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { TransformNode } from "@babylonjs/core/Meshes/transformNode";
+import { Quaternion, Vector3 } from "@babylonjs/core/Maths/math.vector.pure";
+import { TransformNode } from "@babylonjs/core/Meshes/transformNode.pure";
 import { PhysicsMotionType } from "@babylonjs/core/Physics/v2/IPhysicsEnginePlugin";
 import { PhysicsBody } from "@babylonjs/core/Physics/v2/physicsBody";
 import { PhysicsShapeBox } from "@babylonjs/core/Physics/v2/physicsShape";
-import type { Scene } from "@babylonjs/core/scene";
+import type { Scene } from "@babylonjs/core/scene.pure";
 
 export function createGroundCollider(scene: Scene): void {
     const transformNode = new TransformNode("ground", scene);
